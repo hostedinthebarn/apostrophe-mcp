@@ -1,0 +1,40 @@
+# Publishes to npm when a GitHub release is published. Uses npm trusted
+# publishing: GitHub proves to npm which repo and workflow is publishing (OIDC),
+# so no npm token exists anywhere, and each version gets a provenance
+# statement linking it to its commit. The `npm` environment needs a maintainer's
+# approval before the job runs.
+name: Release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Node 24 ships an npm new enough for trusted publishing (11.5.1 or later).
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: The release tag must match package.json
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          [ "$TAG" = "v$version" ] || { echo "::error::Release tag $TAG doesn't match package.json version $version"; exit 1; }
+      - name: Install
+        run: if [ -f package-lock.json ]; then npm ci --ignore-scripts --no-audit --no-fund; fi
+      - name: Test, and check what would be published
+        run: npm test
+      - name: Publish with provenance
+        run: npm publish --provenance --access public
