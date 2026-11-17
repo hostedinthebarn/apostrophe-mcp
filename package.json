@@ -1,0 +1,41 @@
+{
+  "name": "@hostedinthebarn/apostrophe-mcp",
+  "version": "0.0.0",
+  "description": "MCP server for ApostropheCMS 4: Claude drafts content as the signed-in editor, and Apostrophe refuses any publish.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "lib/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\" && node scripts/check-pack.mjs"
+  },
+  "keywords": [
+    "apostrophecms",
+    "apostrophe",
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "cms"
+  ],
+  "author": "Hosted in the Barn",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hostedinthebarn/apostrophe-mcp.git"
+  },
+  "bugs": "https://github.com/hostedinthebarn/apostrophe-mcp/issues",
+  "homepage": "https://github.com/hostedinthebarn/apostrophe-mcp#readme",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "peerDependencies": {
+    "apostrophe": "^4.34.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
